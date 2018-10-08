@@ -1,53 +1,66 @@
 import React, { Component } from "react";
-import logo from "./logo.svg";
-import "./App.css";
-import styled, { ThemeProvider } from "styled-components";
+import styled, { css } from "styled-components";
 
-const Header = styled.div`
-  color: ${props => props.theme.main || "pink"};
+const mainColor = "#9D79BC";
+
+const Title = styled.h1`
+  color: ${props => props.color || "goldenrod"};
+  font-size: 2.8em;
+  margin: 25px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid ${mainColor};
+  display: inline-block;
 `;
-class App extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      theme: {
-        main: "black"
-      }
-    };
-  }
 
+const Gallery = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+`;
+
+const border = css`
+  ${props => {
+    if (props.showBorder) {
+      return `
+        border: 1px solid ${mainColor};
+        border-radius: 8px;
+      `;
+    }
+  }};
+`;
+
+const Thumbnail = styled.img`
+  flex-grow: 1;
+  width: 300px;
+  height: 250px;
+  padding: 5px;
+  margin: 15px;
+  ${border};
+`;
+
+class App extends Component {
   render() {
+    const thumbnails = Array.from({ length: 4 }, (_, index) => {
+      const showBorder = index % 2 === 0;
+      return (
+        <Thumbnail
+          key={index + 1}
+          src={require(`../assets/thumbnail-${index + 1}.jpg`)}
+          showBorder={showBorder}
+        />
+      );
+    });
+
     return (
-      <ThemeProvider theme={this.state.theme}>
-        <div className="App">
-          <Header className="App-header">
-            <img src={logo} className="App-logo" alt="logo" />
-            <p>
-              Edit <code>src/App.js</code> and save to reload.
-            </p>
-            <a
-              className="App-link"
-              href="https://reactjs.org"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Learn React
-            </a>
-          </Header>
-          <select
-            onChange={event => {
-              this.setState({ theme: { main: event.target.value } });
-            }}
-          >
-            <option value="red">RED</option>
-            <option value="yellow">Yellow</option>
-            <option value="pink">Pink</option>
-            <option value="mediumseagreen">Green</option>
-          </select>
-        </div>
-      </ThemeProvider>
+      <div className={this.props.className}>
+        <Title color={mainColor}>Compustagram</Title>
+        <Gallery>{thumbnails}</Gallery>
+      </div>
     );
   }
 }
 
-export default App;
+export default styled(App)`
+  width: 100vw;
+  height: 100vh;
+  text-align: center;
+`;
